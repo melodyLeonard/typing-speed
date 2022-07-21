@@ -1,12 +1,15 @@
-import React, {FC} from 'react';
+import React, {Children, FC} from 'react';
 import wordStyle from '../styles/components/wordpreview.module.scss'
+import { ReactNode } from 'react';
 interface IProps {
   text: string;
   userInput: string
+  className?:string;
+  children?: ReactNode
 }
-const WordPreview:FC<IProps> = ({text, userInput}) => {
+const WordPreview:FC<IProps> = ({text, userInput, className, children}) => {
   
-  return (<div className={wordStyle.container}>{
+  return (<div className={className}>{
     text.split('').map((word,index) => {
       let color='';
       let currentIndex = ''
@@ -16,7 +19,9 @@ const WordPreview:FC<IProps> = ({text, userInput}) => {
       }
       return <span className={`${wordStyle.text} ${wordStyle[currentIndex]} ${wordStyle[color]}`} key={index}>{word}</span>
     })
-    }</div>)
+    }
+    {children}
+    </div>)
 };
 
 export default WordPreview;

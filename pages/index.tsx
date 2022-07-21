@@ -1,10 +1,10 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState, useEffect } from 'react'
 import WordPreview from '../components/WordPreview.components.'
 import styles from '../styles/Home.module.scss'
 import { Button, TextArea } from '../components/common.components';
+import Speed from '../components/Speed';
 
 
 // textarea intial state and type
@@ -13,8 +13,6 @@ interface IInitialState {
   userInput: string
   symbols: number
   seconds: number
-  started: boolean
-  finished: boolean
 }
 
 const initialState ={
@@ -22,12 +20,12 @@ const initialState ={
     userInput: '',
     symbols: 0, 
     seconds: 0,
-    started: false,
-    finished: false
   }
 
 const Home: NextPage = () => {
   const [state, setState] = useState<IInitialState>(initialState)
+  const initialTime = Math.floor(state.randomtext.length / 5)
+  const [time, setTime] = useState(initialTime)
 
   // restart game function
   const handleRestartGame = () => {
@@ -41,25 +39,23 @@ const Home: NextPage = () => {
 
   // textarea input change handler
   const handleUserInputChange = (e:ChangeEvent<HTMLInputElement>) => {
-    setTimer()
     setState({
       ...state,
       userInput: e.target.value,
       symbols: countSymbols(e.target.value)
     })
   }
-
-  const setTimer =()=>{
-    if(!state.started){
-      setState({...state, started:true})
-      // const interval = setInterval(() =>{
-      //   return setState({
-      //     ...state,
-      //     seconds: state.seconds + 1
-      //   })
-      // },1000)
-    }
-  }
+  
+   useEffect(() => {
+    const interval = setInterval(() => {
+      if(time > 0){
+        setTime(time => time - 1);
+        
+      }
+    }, 1000);
+    setState(({seconds}) => ({...state, seconds: seconds+ 1 }))
+    return () => clearInterval(interval);
+  }, [time]);
 
 
   return (
@@ -71,20 +67,36 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Score: 0
-        </h1>
-
-        <p className={styles.description}>
-          You can start the game anytime you are ready{' '}
-        </p>
-
-        <div className={styles.grid}>
-          <WordPreview text={state.randomtext} userInput={state.userInput}/>
-
-          <TextArea onChange={(e) => handleUserInputChange(e)} value={state.userInput} placeholder='Start Typing...' />
-          <Button onClick={() => handleRestartGame()}>Restart</Button>
+        <div>
+          <h1>
+            {time}
+          </h1>
         </div>
+          <div className={styles.card}>
+            <WordPreview className={styles.wordPreview} text={state.randomtext} userInput={state.userInput}>
+              <div className={styles.controls}>
+                <div className={styles.item}>
+                 Seconds: {state.seconds}
+                </div>
+                <div className={styles.item}>
+                  WPM: { <Speed seconds={state.seconds} symbols={state.symbols}/>}
+                </div>
+                <div className={styles.item}>
+                  Total Points: {state.symbols}
+                </div>
+               <div className={styles.item}>
+                 <Button onClick={() => handleRestartGame()}>
+                  <span>
+                    Restart
+                  </span>
+                 </Button>
+               </div>
+            </div>
+            </WordPreview>
+          </div>
+          <div className={styles.card}>
+          <TextArea onChange={(e) => handleUserInputChange(e)} value={state.userInput} placeholder='Start Typing...' />
+          </div>
       </main>
     </div>
   )

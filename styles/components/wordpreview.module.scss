@@ -1,58 +1,32 @@
-$color-success: rgb(7, 143, 59);
-$color-danger: rgb(129, 17, 2);
+$color-success: rgb(10, 231, 95);
+$color-danger: rgb(233, 34, 7);
 
-@keyframes blinkingText {
-    0% {
-        color: #000;
-    }
 
-    49% {
-        color: #000;
-    }
 
-    60% {
-        color: transparent;
-    }
+   .text {
+       font-size: 1.5rem;
+       color: rgb(63, 62, 62);
 
-    99% {
-        color: transparent;
-    }
+       &.correct {
+           background: $color-success;
+       }
 
-    100% {
-        color: #000;
-    }
-}
+       &.incorrect {
+           color: $color-danger;
+           font-size: bolder;
+       }
 
-.container{
-    border: 2px solid rgb(3, 67, 104);
-    padding: 1rem;
-    margin: 1rem;
-    min-height: 70px;
-    width: 100%;
-    max-width: 700px;
-    border-radius: 5px;
+       &:first-child {
+           border-top-left-radius: 5px;
+           border-bottom-left-radius: 5px;
+           padding-left: 10px;
+       }
 
-   .text{
-    padding: 10px 2px;
-
-        &.correct {
-            background: $color-success;
-        }
-    
-        &.incorrect {
-            background: $color-danger;
-            font-size: bolder;
-        }
-        &:first-child{
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            padding-left: 10px;
-        }
-        &.current-word{
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            animation: blinkingText 1.2s infinite;
-        }
+       &.current-word {
+           border-top-right-radius: 5px;
+           border-bottom-right-radius: 5px;
+       }
 
    }
-}
+            
+    

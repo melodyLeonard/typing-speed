@@ -1,4 +1,5 @@
 import { ReactNode, FC } from "react";
+import styles from '../styles/components/common.module.scss'
 
 // TEXT AREA COMPONENT
 interface ITextArea{
@@ -10,6 +11,7 @@ interface ITextArea{
 }
 export const TextArea:FC<ITextArea> = (props) => (
 <textarea 
+    className={`${props.className} ${styles.input}`}
     onPaste={(e)=> e.preventDefault()} 
     {...props }
     />)
@@ -19,6 +21,6 @@ interface IButton extends Partial<ITextArea> {
     onClick:  (param?:any) => void;
     children: ReactNode
 }
-export const Button:FC<IButton> = (props) => (<button {...props }>{props.children}</button>)
+export const Button:FC<IButton> = (props) => (<button className={styles.button} {...props }>{props.children}</button>)
 
 

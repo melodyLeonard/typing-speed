@@ -8,7 +8,7 @@ interface IProps{
 
 const Speed:FC<IProps> = ({seconds, symbols}) => {
  if(!!seconds  && !!symbols){ 
-    return <div>{estimatedWordsPerminute(symbols, seconds)}</div>
+    return <span>{estimatedWordsPerminute(symbols, seconds)}</span>
 }
 
  return null
