@@ -8,12 +8,15 @@ interface ITextArea{
     placeholder?: string;
     onFocus?: (param?:any) => void
     onChange: (param?:any) => void
+    disabled?: boolean
+    ref: any
 }
 export const TextArea:FC<ITextArea> = (props) => (
 <textarea 
     className={`${props.className} ${styles.input}`}
     onPaste={(e)=> e.preventDefault()} 
     {...props }
+    autoFocus
     />)
 
 // BUTTON COMPONENTS

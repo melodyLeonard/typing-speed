@@ -32,19 +32,23 @@
         margin: 20px 0;
         padding-top: 20px;
         display: flex;
+        justify-content: space-between;
         align-items: center;
         
-        
-        .item{
-          &:first-child{
-            padding-left: 0 !important ;
-          }
-          &:last-child {
-            border: 0 !important;
-          }
-          border-right: 2px solid  rgb(236, 234, 234);
-          padding: 0 .8rem;
-          font-size: 1.2rem;
+        .leftWrapper{
+          display: flex;
+          align-items: center;
+          .item{
+            &:first-child{
+              padding-left: 0 !important ;
+            }
+            &:last-child {
+              border: 0 !important;
+            }
+            border-right: 2px solid  rgb(236, 234, 234);
+            padding: 0 .8rem;
+            font-size: 1.2rem;
+        }
         }
       }
     }

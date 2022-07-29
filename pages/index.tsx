@@ -1,10 +1,11 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { ChangeEvent, useState, useEffect } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import WordPreview from '../components/WordPreview.components.'
 import styles from '../styles/Home.module.scss'
 import { Button, TextArea } from '../components/common.components';
 import Speed from '../components/Speed';
+import { data } from '../data/words.data';
 
 
 // textarea intial state and type
@@ -12,28 +13,31 @@ interface IInitialState {
   randomtext: string
   userInput: string
   symbols: number
-  seconds: number
+  started: boolean
+  finished: boolean
 }
 
 const initialState ={
-    randomtext: 'this is some ramdom test',
     userInput: '',
     symbols: 0, 
-    seconds: 0,
+    started:false,
+    finished: false
   }
+
+  let interval:any;
+  let Rmv = 1;
 
 const Home: NextPage = () => {
-  const [state, setState] = useState<IInitialState>(initialState)
-  const initialTime = Math.floor(state.randomtext.length / 5)
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [state, setState] = useState<IInitialState>({randomtext: data[currentWordIndex],...initialState})
+  const initialTime = Math.floor(state.randomtext.length / 3)
   const [time, setTime] = useState(initialTime)
+  const [seconds, setSeconds] = useState(0)
+  const [disableInput, setDisableInput] = useState(true)
+  const focusTextArea = useRef<HTMLInputElement>();
 
-  // restart game function
-  const handleRestartGame = () => {
-    setState(initialState)
-  }
-
-  const countSymbols = (userInput:string): number => {
-    const text = state.userInput.replace(' ', '')
+  const countCorrectSymbols = (userInput:string): number => {
+    const text = state.randomtext.replace(' ', '')
     return userInput.replace(' ', '').split('').filter((sym, idx) => sym === text[idx]).length
   }
 
@@ -42,20 +46,26 @@ const Home: NextPage = () => {
     setState({
       ...state,
       userInput: e.target.value,
-      symbols: countSymbols(e.target.value)
+      symbols: countCorrectSymbols(e.target.value)
     })
   }
-  
-   useEffect(() => {
-    const interval = setInterval(() => {
-      if(time > 0){
-        setTime(time => time - 1);
-        
+
+  const startTimer = () => {
+    setDisableInput(false)
+    if(focusTextArea.current) focusTextArea.current.focus();
+    interval = setInterval(() => {
+      if(interval && Rmv === initialTime + 1) {
+        clearInterval(interval);
+        Rmv = 1;
+        setDisableInput(true)
+        return;
       }
+      setTime(time - Rmv)
+      setSeconds(seconds + Rmv)
+      Rmv = Rmv+1
     }, 1000);
-    setState(({seconds}) => ({...state, seconds: seconds+ 1 }))
-    return () => clearInterval(interval);
-  }, [time]);
+  }
+
 
 
   return (
@@ -68,26 +78,34 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <div>
-          <h1>
+          {
+            time === 0 ? 
+            <>
+              <h1>Game Over</h1>
+              <h3> You made a total point of {state.symbols}</h3>
+            </>
+            :
+            <h1>
             {time}
           </h1>
+          }
+          
         </div>
           <div className={styles.card}>
             <WordPreview className={styles.wordPreview} text={state.randomtext} userInput={state.userInput}>
               <div className={styles.controls}>
-                <div className={styles.item}>
-                 Seconds: {state.seconds}
-                </div>
-                <div className={styles.item}>
-                  WPM: { <Speed seconds={state.seconds} symbols={state.symbols}/>}
-                </div>
-                <div className={styles.item}>
-                  Total Points: {state.symbols}
-                </div>
+                <div className={styles.leftWrapper}>
+                  <div className={styles.item}>
+                    WPM: { <Speed seconds={seconds} symbols={state.symbols}/>}
+                  </div>
+                  <div className={styles.item}>
+                    Points: {state.symbols}
+                  </div>
+                  </div>
                <div className={styles.item}>
-                 <Button onClick={() => handleRestartGame()}>
+                 <Button onClick={() => startTimer()}>
                   <span>
-                    Restart
+                    Start
                   </span>
                  </Button>
                </div>
@@ -95,7 +113,12 @@ const Home: NextPage = () => {
             </WordPreview>
           </div>
           <div className={styles.card}>
-          <TextArea onChange={(e) => handleUserInputChange(e)} value={state.userInput} placeholder='Start Typing...' />
+          <TextArea 
+            ref={focusTextArea} 
+            disabled={disableInput} 
+            onChange={(e) => handleUserInputChange(e)} 
+            value={state.userInput} 
+            placeholder='Start Typing...' />
           </div>
       </main>
     </div>

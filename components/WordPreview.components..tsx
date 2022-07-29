@@ -1,4 +1,4 @@
-import React, {Children, FC} from 'react';
+import React, {FC} from 'react';
 import wordStyle from '../styles/components/wordpreview.module.scss'
 import { ReactNode } from 'react';
 interface IProps {
